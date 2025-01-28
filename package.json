@@ -1,0 +1,54 @@
+{
+	"name": "payment-app",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"next": "15.1.6"
+	},
+	"devDependencies": {
+		"postcss": "^8",
+		"tailwindcss": "^3.4.1",
+		"eslint": "^9",
+		"eslint-config-next": "15.1.6",
+		"@eslint/eslintrc": "^3"
+	},
+	"Transform": "AWS::Serverless-2016-10-31",
+	"Resources": {
+		"Function": {
+			"Type": "AWS::Serverless::Function",
+			"Properties": {
+				"Description": {
+					"Fn::Sub": [
+						"Stack ${AWS::StackName} Function ${ResourceName}",
+						{
+							"ResourceName": "Function"
+						}
+					]
+				},
+				"CodeUri": "src/Function",
+				"Handler": "index.handler",
+				"Runtime": "nodejs22.x",
+				"MemorySize": 3008,
+				"Timeout": 30,
+				"Tracing": "Active"
+			}
+		},
+		"FunctionLogGroup": {
+			"Type": "AWS::Logs::LogGroup",
+			"DeletionPolicy": "Retain",
+			"Properties": {
+				"LogGroupName": {
+					"Fn::Sub": "/aws/lambda/${Function}"
+				}
+			}
+		}
+	}
+}
