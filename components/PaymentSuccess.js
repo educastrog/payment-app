@@ -1,16 +1,23 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { sendMessageToNative } from '@/utils/sendMessageToNative';
 
 export default function PaymentSuccess({ processUuid }) {
   const router = useRouter();
   const policyNumber = `PET-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+  const hasSentMessage = useRef(false);
 
   useEffect(() => {
     localStorage.removeItem('paymentStatus');
     localStorage.removeItem('errorMessage');
     localStorage.removeItem('lastSelectedCard');
+
+    if (!hasSentMessage.current) {
+      sendMessageToNative({ pageId: 'paymentSuccess', message: 'User is on the payment success page' });
+      hasSentMessage.current = true;
+    }
   }, []);
 
   return (

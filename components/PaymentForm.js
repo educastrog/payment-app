@@ -1,8 +1,8 @@
-// components/PaymentForm.js
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { sendMessageToNative } from '@/utils/sendMessageToNative';
 
 const TEST_CARDS = {
   default: {
@@ -38,6 +38,7 @@ export default function PaymentForm({ processUuid, onPaymentStatusChange }) {
     cvv: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const hasSentMessage = useRef(false);
 
   useEffect(() => {
     const lastSelectedCard = localStorage.getItem('lastSelectedCard');
@@ -49,6 +50,11 @@ export default function PaymentForm({ processUuid, onPaymentStatusChange }) {
         expiryDate: TEST_CARDS[lastSelectedCard].expiry,
         cvv: TEST_CARDS[lastSelectedCard].cvv
       });
+    }
+
+    if (!hasSentMessage.current) {
+      sendMessageToNative({ pageId: 'paymentForm', message: 'User is on the payment form page' });
+      hasSentMessage.current = true;
     }
   }, []);
 

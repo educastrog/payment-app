@@ -2,10 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import PaymentDetailsCard from '@/components/PaymentDetailsCard';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { sendMessageToNative } from '@/utils/sendMessageToNative';
 
 export default function HomePage() {
   const router = useRouter();
+  const hasSentMessage = useRef(false);
 
   const handleStartPayment = () => {
     router.push('/payment');
@@ -15,6 +17,11 @@ export default function HomePage() {
       localStorage.removeItem('paymentStatus');
       localStorage.removeItem('errorMessage');
       localStorage.removeItem('lastSelectedCard');
+
+      if (!hasSentMessage.current) {
+        sendMessageToNative({ pageId: 'paymentDetailsPage', message: 'User is on the payment details page' });
+        hasSentMessage.current = true;
+      }
     }, []);
 
   return (
